@@ -2,16 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from '@neondatabase/serverless';
 import sql from 'sql-template-tag';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
 
 export async function GET(request: NextRequest) {
   try {
-    const result = await sql`
+    const query = sql`
       SELECT u.id, u.email, u.full_name, r.name as role_name, u.is_active, u.created_at
       FROM users u
       LEFT JOIN roles r ON u.role_id = r.id
       ORDER BY u.created_at DESC
     `;
+
+    const result = await pool.query(query.text, query.values);
 
     return NextResponse.json(
       {

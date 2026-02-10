@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from '@neondatabase/serverless';
-import { sql } from '@vercel/postgres';
+import sql from 'sql-template-tag';
 import { logActivity } from '@/lib/auth';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
 
 export async function DELETE(
   request: NextRequest,
@@ -15,7 +15,8 @@ export async function DELETE(
     const authUser = request.headers.get('x-user-id');
 
     // Check if user exists
-    const userExists = await sql`SELECT id FROM users WHERE id = ${userId}`;
+    const userQuery = sql`SELECT id FROM users WHERE id = ${userId}`;
+    const userExists = await pool.query(userQuery.text, userQuery.values);
 
     if (userExists.rows.length === 0) {
       return NextResponse.json(
@@ -25,7 +26,8 @@ export async function DELETE(
     }
 
     // Delete user
-    await sql`DELETE FROM users WHERE id = ${userId}`;
+    const deleteQuery = sql`DELETE FROM users WHERE id = ${userId}`;
+    await pool.query(deleteQuery.text, deleteQuery.values);
 
     // Log activity
     await logActivity(

@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from '@neondatabase/serverless';
-import { sql } from '@vercel/postgres'; // Declare the sql variable
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+import { sql } from '@vercel/postgres';
 
 export async function DELETE(
   request: NextRequest,

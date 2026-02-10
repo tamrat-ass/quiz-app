@@ -14,9 +14,7 @@ export async function DELETE(
     const authUser = request.headers.get('x-user-id');
 
     // Check if user exists
-    const userExists = await sql`
-      SELECT id FROM users WHERE id = $1
-    `, [userId];
+    const userExists = await sql`SELECT id FROM users WHERE id = ${userId}`;
 
     if (userExists.rows.length === 0) {
       return NextResponse.json(
@@ -26,9 +24,7 @@ export async function DELETE(
     }
 
     // Delete user
-    await sql`
-      DELETE FROM users WHERE id = $1
-    `, [userId];
+    await sql`DELETE FROM users WHERE id = ${userId}`;
 
     // Log activity
     await logActivity(

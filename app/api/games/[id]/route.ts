@@ -12,9 +12,7 @@ export async function DELETE(
     const gameId = parseInt(params.id);
 
     // Check if game exists
-    const gameExists = await sql`
-      SELECT id FROM games WHERE id = $1
-    `, [gameId];
+    const gameExists = await sql`SELECT id FROM games WHERE id = ${gameId}`;
 
     if (gameExists.rows.length === 0) {
       return NextResponse.json(
@@ -24,9 +22,7 @@ export async function DELETE(
     }
 
     // Delete game
-    await sql`
-      DELETE FROM games WHERE id = $1
-    `, [gameId];
+    await sql`DELETE FROM games WHERE id = ${gameId}`;
 
     return NextResponse.json(
       { message: 'Game deleted successfully' },
@@ -52,8 +48,8 @@ export async function GET(
       SELECT g.*, u.full_name as created_by_name
       FROM games g
       LEFT JOIN users u ON g.created_by = u.id
-      WHERE g.id = $1
-    `, [gameId];
+      WHERE g.id = ${gameId}
+    `;
 
     if (gameResult.rows.length === 0) {
       return NextResponse.json(
@@ -69,9 +65,9 @@ export async function GET(
       SELECT q.id, q.title, q.difficulty, gq.order_index
       FROM game_questions gq
       JOIN questions q ON gq.question_id = q.id
-      WHERE gq.game_id = $1
+      WHERE gq.game_id = ${gameId}
       ORDER BY gq.order_index
-    `, [gameId];
+    `;
 
     return NextResponse.json(
       {

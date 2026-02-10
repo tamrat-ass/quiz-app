@@ -3,9 +3,12 @@ import { Pool } from '@neondatabase/serverless';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-export async function DELETE(request: NextRequest, { params }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const questionId = parseInt(id);
 
     // Check if question exists

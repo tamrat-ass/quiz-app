@@ -6,10 +6,11 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const gameId = parseInt(params.id);
+    const { id } = await params;
+    const gameId = parseInt(id);
 
     // Check if game exists
     const gameExists = await sql`SELECT id FROM games WHERE id = ${gameId}`;
@@ -39,10 +40,11 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const gameId = parseInt(params.id);
+    const { id } = await params;
+    const gameId = parseInt(id);
 
     const gameResult = await sql`
       SELECT g.*, u.full_name as created_by_name

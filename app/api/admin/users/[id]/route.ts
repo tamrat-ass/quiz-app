@@ -7,10 +7,11 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id;
+    const { id } = await params;
+    const userId = id;
     const authUser = request.headers.get('x-user-id');
 
     // Check if user exists
